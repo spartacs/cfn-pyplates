@@ -171,6 +171,25 @@ class ResourcesTestCase(unittest.TestCase):
         }''')
         self.assertEqual(unicode(cft.resources.test), expected_out)
 
+    def test_resource_with_creation_policy(self):
+        creation_policy = core.CreationPolicy(42, 'NotActuallyValidatedYerOnYerOwn')
+        res = core.Resource('TestResource', 'AWS::Resource::Test', None, creation_policy)
+        cft = core.CloudFormationTemplate()
+        cft.resources.test = res
+
+        # The output should have the metadata attached
+        expected_out = dedent(u'''\
+        {
+          "Type": "AWS::Resource::Test",
+          "CreationPolicy": {
+            "ResourceSignal": {
+              "Count": 42,
+              "Timeout": "NotActuallyValidatedYerOnYerOwn"
+            }
+          }
+        }''')
+        self.assertEqual(unicode(cft.resources.test), expected_out)
+
     def test_resource_with_deletion_policy(self):
         deletion_policy = core.DeletionPolicy("Retain")
         res = core.Resource('TestResource', 'AWS::Resource::Test', None, deletion_policy)
