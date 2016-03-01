@@ -1,4 +1,3 @@
-distribute
 docopt
 ordereddict
 pbr
